@@ -13,9 +13,8 @@
 // Re-export types (to be implemented)
 // export * from './types';
 
-// Re-export context and hooks (to be implemented)
-// export * from './context/AuthContext';
-// export * from './hooks/useAuth';
+// Re-export context and hooks
+export * from "./context/AuthContext";
 
 // Re-export components (to be implemented)
 // export * from './components/LoginForm';
@@ -26,8 +25,9 @@
 // export * from './utils/authHelpers';
 // export * from './utils/validation';
 
-// Placeholder exports to demonstrate structure
+// Feature metadata
 export const AuthFeature = {
+  id: "auth",
   name: "Auth",
   description: "User authentication and authorization",
 };
