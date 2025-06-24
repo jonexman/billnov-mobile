@@ -16,7 +16,8 @@
 // Re-export context and hooks
 export * from "./context/AuthContext";
 
-// Re-export components (to be implemented)
+// Re-export components
+export * from "./components/AuthGuard";
 // export * from './components/LoginForm';
 // export * from './components/SignupForm';
 // export * from './components/PasswordResetForm';

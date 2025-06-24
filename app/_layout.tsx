@@ -13,7 +13,7 @@ import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // Import feature providers and context
-import { AuthFeature, AuthProvider } from "@/features/auth";
+import { AuthFeature, AuthGuard, AuthProvider } from "@/features/auth";
 import { ExpenseProvider } from "@/features/expenses";
 import { WalletFeature } from "@/features/wallet";
 import { FeaturesProvider } from "@/shared/contexts/FeaturesContext";
@@ -99,31 +99,34 @@ function RootLayoutNav() {
     <FeaturesProvider config={featureConfig}>
       {/* Wrap with individual feature providers */}
       <AuthProvider>
-        <ExpenseProvider>
-          {/* TODO: Add other feature providers as they are implemented */}
-          {/* <WalletProvider> */}
-          <SafeAreaProvider style={{ backgroundColor: "transparent" }}>
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-              <View style={{ flex: 1, backgroundColor: "transparent" }}>
-                <Stack screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="index" redirect />
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="auth" />
-                  <Stack.Screen name="onboarding" />
-                  <Stack.Screen name="profile" />
-                  <Stack.Screen name="bank-accounts" />
-                  <Stack.Screen name="add-bank-account" />
-                  <Stack.Screen name="verification" />
-                  <Stack.Screen name="security" />
-                  <Stack.Screen name="+not-found" />
-                </Stack>
-              </View>
-            </ThemeProvider>
-          </SafeAreaProvider>
-          {/* </WalletProvider> */}
-        </ExpenseProvider>
+        {/* AuthGuard checks authentication status and redirects if needed */}
+        <AuthGuard>
+          <ExpenseProvider>
+            {/* TODO: Add other feature providers as they are implemented */}
+            {/* <WalletProvider> */}
+            <SafeAreaProvider style={{ backgroundColor: "transparent" }}>
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              >
+                <View style={{ flex: 1, backgroundColor: "transparent" }}>
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="index" redirect />
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="auth" />
+                    <Stack.Screen name="onboarding" />
+                    <Stack.Screen name="profile" />
+                    <Stack.Screen name="bank-accounts" />
+                    <Stack.Screen name="add-bank-account" />
+                    <Stack.Screen name="verification" />
+                    <Stack.Screen name="security" />
+                    <Stack.Screen name="+not-found" />
+                  </Stack>
+                </View>
+              </ThemeProvider>
+            </SafeAreaProvider>
+            {/* </WalletProvider> */}
+          </ExpenseProvider>
+        </AuthGuard>
       </AuthProvider>
     </FeaturesProvider>
   );
