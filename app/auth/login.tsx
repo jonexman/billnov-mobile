@@ -1,97 +1,344 @@
+import Colors from "@/constants/Colors";
+import { useAuth } from "@/features/auth";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Stack, useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function LoginScreen() {
+  const router = useRouter();
+  const { signIn, isLoading } = useAuth();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
-  const handleLogin = () => {
-    // For now, just navigate to home
-    router.replace("../(tabs)");
+  // Define colors based on theme
+  const backgroundColor = isDark ? "#000000" : "#FFFFFF";
+  const textColor = isDark ? "#FFFFFF" : "#000000";
+  const primaryColor = Colors[colorScheme].tint;
+  const inputBgColor = isDark ? "#1C1C1E" : "#F2F2F7";
+  const placeholderColor = isDark ? "#8E8E93" : "#C7C7CC";
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setLoginError("Please enter both email and password");
+      return;
+    }
+
+    try {
+      setLoginError(null);
+      const { error } = await signIn(email, password);
+
+      if (error) {
+        console.error("Login error:", error);
+        setLoginError(
+          error.message || "Failed to login. Please check your credentials."
+        );
+      }
+    } catch (error) {
+      console.error("Login exception:", error);
+      setLoginError("An unexpected error occurred. Please try again.");
+    }
+  };
+
+  const handleSignUp = () => {
+    router.push("/auth/signup");
+  };
+
+  const handleForgotPassword = () => {
+    router.push("/auth/forgot-password");
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="dark" />
-      <View className="px-6 py-8 flex-1">
-        {/* Logo */}
-        <View className="items-center mt-10 mb-8">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={[styles.container, { backgroundColor }]}
+    >
+      <Stack.Screen
+        options={{
+          title: "Login",
+          headerStyle: { backgroundColor },
+          headerTintColor: textColor,
+          headerShadowVisible: false,
+        }}
+      />
+
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.logoContainer}>
           <Image
-            source={require("../../assets/images/billnov-logo.png")}
-            style={{ width: 180, height: 50 }}
+            source={require("@/assets/images/billnov-logo.png")}
+            style={styles.logo}
             resizeMode="contain"
           />
         </View>
 
-        {/* Tab Navigation */}
-        <View className="flex-row mb-10">
-          <View className="flex-1">
-            <Text className="text-primary text-lg font-medium text-center mb-1">
-              Log In
-            </Text>
-            <View className="h-1 bg-primary mx-auto w-6 rounded-full" />
+        <Text style={[styles.title, { color: textColor }]}>Welcome Back</Text>
+        <Text
+          style={[styles.subtitle, { color: isDark ? "#8E8E93" : "#6E6E73" }]}
+        >
+          Sign in to continue to BillNov
+        </Text>
+
+        {loginError && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{loginError}</Text>
           </View>
-          <TouchableOpacity
-            className="flex-1"
-            onPress={() => router.push("./signup")}
+        )}
+
+        <View style={styles.formContainer}>
+          <View
+            style={[styles.inputContainer, { backgroundColor: inputBgColor }]}
           >
-            <Text className="text-gray-400 text-lg font-medium text-center">
-              Sign Up
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Form */}
-        <View className="mb-4">
-          <Text className="text-gray-600 mb-1">Email</Text>
-          <TextInput
-            className="bg-white border border-gray-300 rounded-lg p-3 mb-6"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter your email"
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-
-          <Text className="text-gray-600 mb-1">Password</Text>
-          <View className="flex-row bg-white border border-gray-300 rounded-lg mb-2 items-center">
+            <Ionicons
+              name="mail-outline"
+              size={20}
+              color={placeholderColor}
+              style={styles.inputIcon}
+            />
             <TextInput
-              className="flex-1 p-3"
+              style={[styles.input, { color: textColor }]}
+              placeholder="Email"
+              placeholderTextColor={placeholderColor}
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+          </View>
+
+          <View
+            style={[styles.inputContainer, { backgroundColor: inputBgColor }]}
+          >
+            <Ionicons
+              name="lock-closed-outline"
+              size={20}
+              color={placeholderColor}
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={[styles.input, { color: textColor }]}
+              placeholder="Password"
+              placeholderTextColor={placeholderColor}
               value={password}
               onChangeText={setPassword}
-              placeholder="Enter your password"
               secureTextEntry={!showPassword}
+              autoCapitalize="none"
             />
             <TouchableOpacity
+              style={styles.eyeIcon}
               onPress={() => setShowPassword(!showPassword)}
-              className="px-3"
             >
               <Ionicons
-                name={showPassword ? "eye" : "eye-off"}
+                name={showPassword ? "eye-outline" : "eye-off-outline"}
                 size={20}
-                color="gray"
+                color={placeholderColor}
               />
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity className="self-end mb-6">
-            <Text className="text-gray-500">Forgot password</Text>
+          <TouchableOpacity
+            style={styles.forgotPassword}
+            onPress={handleForgotPassword}
+          >
+            <Text style={[styles.forgotPasswordText, { color: primaryColor }]}>
+              Forgot Password?
+            </Text>
           </TouchableOpacity>
-        </View>
 
-        {/* Login Button */}
-        <TouchableOpacity
-          className="bg-primary py-4 rounded-full items-center"
-          onPress={handleLogin}
-        >
-          <Text className="text-white font-bold text-base">Login</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+          <TouchableOpacity
+            style={[
+              styles.loginButton,
+              { backgroundColor: primaryColor, opacity: isLoading ? 0.7 : 1 },
+            ]}
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Text style={styles.loginButtonText}>Signing in...</Text>
+            ) : (
+              <Text style={styles.loginButtonText}>Sign In</Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.signupContainer}>
+            <Text
+              style={[
+                styles.signupText,
+                { color: isDark ? "#8E8E93" : "#6E6E73" },
+              ]}
+            >
+              Don't have an account?
+            </Text>
+            <TouchableOpacity onPress={handleSignUp}>
+              <Text style={[styles.signupLink, { color: primaryColor }]}>
+                {" Sign Up"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Quick Login Buttons for Testing */}
+          {__DEV__ && (
+            <View style={styles.devContainer}>
+              <Text style={[styles.devTitle, { color: textColor }]}>
+                Dev Quick Login
+              </Text>
+              <TouchableOpacity
+                style={[styles.devButton, { backgroundColor: "#3B82F6" }]}
+                onPress={() => {
+                  setEmail("admin@billnovpay.com");
+                  setPassword("password123");
+                }}
+              >
+                <Text style={styles.devButtonText}>Admin</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.devButton, { backgroundColor: "#10B981" }]}
+                onPress={() => {
+                  setEmail("nigeriakalu@gmail.com");
+                  setPassword("password123");
+                }}
+              >
+                <Text style={styles.devButtonText}>User</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginTop: 40,
+    marginBottom: 40,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    marginBottom: 32,
+  },
+  formContainer: {
+    width: "100%",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 12,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    height: 56,
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    height: "100%",
+  },
+  eyeIcon: {
+    padding: 8,
+  },
+  forgotPassword: {
+    alignSelf: "flex-end",
+    marginBottom: 24,
+  },
+  forgotPasswordText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  loginButton: {
+    height: 56,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  loginButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  signupContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 16,
+  },
+  signupText: {
+    fontSize: 14,
+  },
+  signupLink: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  errorContainer: {
+    backgroundColor: "#FEE2E2",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: "#DC2626",
+    fontSize: 14,
+  },
+  devContainer: {
+    marginTop: 40,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#E5E5E5",
+    borderRadius: 12,
+    borderStyle: "dashed",
+  },
+  devTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  devButton: {
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    alignItems: "center",
+  },
+  devButtonText: {
+    color: "white",
+    fontWeight: "600",
+  },
+});
