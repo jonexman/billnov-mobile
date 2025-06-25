@@ -9,22 +9,25 @@
  * - Currency conversion
  */
 
-// Re-export types (to be implemented)
-// export * from './types';
+// Re-export types
+export * from "./types";
 
-// Re-export context and hooks (to be implemented)
-// export * from './context/WalletContext';
+// Re-export context and hooks
+export * from "./context/WalletContext";
 
-// Re-export components (to be implemented)
-// export * from './components/WalletCard';
-// export * from './components/TransactionList';
-// export * from './components/CurrencySelector';
+// Re-export components
+export * from "./components/CurrencySelector";
+export * from "./components/PinModal";
+export * from "./components/TransactionItem";
+export * from "./components/TransactionList";
+export * from "./components/WalletCard";
+export * from "./components/WalletSummary";
 
-// Re-export utilities (to be implemented)
-// export * from './utils/cryptoHelpers';
-// export * from './utils/formatters';
+// Re-export utilities
+export * from "./utils/helpers";
+export * from "./utils/mockData";
 
-// Placeholder exports to demonstrate structure
+// Feature metadata
 export const WalletFeature = {
   name: "Wallet",
   description: "Cryptocurrency wallet management",
