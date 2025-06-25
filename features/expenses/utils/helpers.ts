@@ -166,3 +166,35 @@ export function calculateBudgetProgress(
 
   return { spent, percentage };
 }
+
+/**
+ * Generate month items for horizontal month selector
+ */
+export function getMonthsForScroll(currentMonth: number, currentYear: number) {
+  const months = [];
+
+  // Add previous 4 months, current month, and next 4 months
+  // (reduced from 6+5 to 4+4 to fit better with year display)
+  for (let i = -4; i <= 4; i++) {
+    let monthIndex = currentMonth + i;
+    let year = currentYear;
+
+    if (monthIndex < 0) {
+      monthIndex = 12 + monthIndex;
+      year = currentYear - 1;
+    } else if (monthIndex > 11) {
+      monthIndex = monthIndex - 12;
+      year = currentYear + 1;
+    }
+
+    months.push({
+      index: monthIndex,
+      year,
+      name: new Date(year, monthIndex).toLocaleString("default", {
+        month: "short",
+      }),
+    });
+  }
+
+  return months;
+}

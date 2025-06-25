@@ -1,15 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { styled } from "nativewind";
 import React from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+// Create styled components
+const StyledView = styled(View);
+const StyledText = styled(Text);
+const StyledTouchableOpacity = styled(TouchableOpacity);
+const StyledScrollView = styled(ScrollView);
+const StyledSafeAreaView = styled(SafeAreaView);
 
 export default function ExpenseOptionsScreen() {
   const handleBack = () => {
@@ -39,157 +41,102 @@ export default function ExpenseOptionsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <StyledSafeAreaView className="flex-1 bg-gray-50">
       <StatusBar style="dark" />
 
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+      <StyledView className="flex-row items-center px-4 py-4 pt-5 border-b border-gray-100">
+        <StyledTouchableOpacity onPress={handleBack} className="p-2 mr-2">
           <Ionicons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>More Options</Text>
-      </View>
+        </StyledTouchableOpacity>
+        <StyledText className="text-lg font-semibold">More Options</StyledText>
+      </StyledView>
 
-      <ScrollView style={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Transaction Management</Text>
+      <StyledScrollView className="flex-1">
+        <StyledView className="mt-6 px-4">
+          <StyledText className="text-base font-semibold text-gray-600 mb-3">
+            Transaction Management
+          </StyledText>
 
-          <TouchableOpacity style={styles.menuItem} onPress={handleAddCategory}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: "#E3F2FD" }]}
-            >
+          <StyledTouchableOpacity
+            className="flex-row items-center bg-white p-4 rounded-xl mb-3 shadow-sm"
+            onPress={handleAddCategory}
+          >
+            <StyledView className="w-12 h-12 rounded-full bg-blue-50 items-center justify-center mr-4">
               <Ionicons name="pricetag-outline" size={24} color="#4A89F3" />
-            </View>
-            <View style={styles.menuTextContainer}>
-              <Text style={styles.menuItemText}>Add Category</Text>
-              <Text style={styles.menuItemDescription}>
+            </StyledView>
+            <StyledView className="flex-1">
+              <StyledText className="text-base font-medium">
+                Add Category
+              </StyledText>
+              <StyledText className="text-sm text-gray-500">
                 Create custom expense categories
-              </Text>
-            </View>
+              </StyledText>
+            </StyledView>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
+          </StyledTouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={handleAddBudget}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: "#E8F5E9" }]}
-            >
+          <StyledTouchableOpacity
+            className="flex-row items-center bg-white p-4 rounded-xl mb-3 shadow-sm"
+            onPress={handleAddBudget}
+          >
+            <StyledView className="w-12 h-12 rounded-full bg-green-50 items-center justify-center mr-4">
               <Ionicons name="wallet-outline" size={24} color="#4CAF50" />
-            </View>
-            <View style={styles.menuTextContainer}>
-              <Text style={styles.menuItemText}>Add Budget</Text>
-              <Text style={styles.menuItemDescription}>
+            </StyledView>
+            <StyledView className="flex-1">
+              <StyledText className="text-base font-medium">
+                Add Budget
+              </StyledText>
+              <StyledText className="text-sm text-gray-500">
                 Set spending limits by category
-              </Text>
-            </View>
+              </StyledText>
+            </StyledView>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
-        </View>
+          </StyledTouchableOpacity>
+        </StyledView>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Data & Settings</Text>
+        <StyledView className="mt-6 px-4">
+          <StyledText className="text-base font-semibold text-gray-600 mb-3">
+            Data & Settings
+          </StyledText>
 
-          <TouchableOpacity style={styles.menuItem} onPress={handleExportData}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: "#FFF3E0" }]}
-            >
+          <StyledTouchableOpacity
+            className="flex-row items-center bg-white p-4 rounded-xl mb-3 shadow-sm"
+            onPress={handleExportData}
+          >
+            <StyledView className="w-12 h-12 rounded-full bg-orange-50 items-center justify-center mr-4">
               <Ionicons name="download-outline" size={24} color="#FF9800" />
-            </View>
-            <View style={styles.menuTextContainer}>
-              <Text style={styles.menuItemText}>Export Data</Text>
-              <Text style={styles.menuItemDescription}>
+            </StyledView>
+            <StyledView className="flex-1">
+              <StyledText className="text-base font-medium">
+                Export Data
+              </StyledText>
+              <StyledText className="text-sm text-gray-500">
                 Download your financial data
-              </Text>
-            </View>
+              </StyledText>
+            </StyledView>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
+          </StyledTouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={handleSettings}>
-            <View
-              style={[styles.iconContainer, { backgroundColor: "#E0F2F1" }]}
-            >
+          <StyledTouchableOpacity
+            className="flex-row items-center bg-white p-4 rounded-xl mb-3 shadow-sm"
+            onPress={handleSettings}
+          >
+            <StyledView className="w-12 h-12 rounded-full bg-teal-50 items-center justify-center mr-4">
               <Ionicons name="settings-outline" size={24} color="#009688" />
-            </View>
-            <View style={styles.menuTextContainer}>
-              <Text style={styles.menuItemText}>Settings</Text>
-              <Text style={styles.menuItemDescription}>
+            </StyledView>
+            <StyledView className="flex-1">
+              <StyledText className="text-base font-medium">
+                Settings
+              </StyledText>
+              <StyledText className="text-sm text-gray-500">
                 Configure expense preferences
-              </Text>
-            </View>
+              </StyledText>
+            </StyledView>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          </StyledTouchableOpacity>
+        </StyledView>
+      </StyledScrollView>
+    </StyledSafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8f9fa",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingTop: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    marginTop: 8,
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  content: {
-    flex: 1,
-  },
-  section: {
-    marginTop: 24,
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#666",
-    marginBottom: 12,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-  menuTextContainer: {
-    flex: 1,
-  },
-  menuItemText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  menuItemDescription: {
-    fontSize: 14,
-    color: "#999",
-    marginTop: 2,
-  },
-});

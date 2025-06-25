@@ -1,14 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
+import { styled } from "nativewind";
 import React, { useRef, useState } from "react";
 import {
   Animated,
-  StyleSheet,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { AddTransactionModal } from "./AddTransactionModal";
+
+// Create styled components
+const StyledView = styled(View);
+const StyledText = styled(Text);
+const StyledTouchableOpacity = styled(TouchableOpacity);
 
 export const FloatingActionButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,123 +78,156 @@ export const FloatingActionButton = () => {
     );
   }
 
+  // Calculate rotation for the plus/close icon
+  const rotation = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "45deg"],
+  });
+
   return (
-    <View style={styles.container}>
+    <>
       {/* Background overlay to close the menu when clicking outside */}
       {isOpen && (
         <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
-          <View style={[StyleSheet.absoluteFill, styles.overlay]} />
+          <StyledView
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0,0,0,0.1)",
+              zIndex: 100,
+            }}
+          />
         </TouchableWithoutFeedback>
       )}
 
-      {/* Menu items */}
-      {isOpen && (
-        <>
-          <View style={styles.menuItem}>
-            <TouchableOpacity
+      {/* Main FAB container - fixed positioning */}
+      <View
+        style={{
+          position: "absolute",
+          bottom: 24,
+          right: 24,
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000,
+        }}
+      >
+        {/* Menu items */}
+        {isOpen && (
+          <>
+            <StyledTouchableOpacity
               onPress={openIncomeModal}
-              style={styles.incomeButton}
+              style={{
+                position: "absolute",
+                bottom: 180,
+                alignItems: "center",
+              }}
             >
-              <View style={styles.iconCircle}>
-                <Ionicons name="trending-up" size={20} color="#4CAF50" />
-              </View>
-              <Text style={styles.menuItemText}>Income</Text>
-            </TouchableOpacity>
-          </View>
+              <StyledView
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 28,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#28A745",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 3,
+                  elevation: 5,
+                }}
+              >
+                <Ionicons name="trending-up" size={24} color="#FFFFFF" />
+              </StyledView>
+              <StyledText
+                style={{
+                  marginTop: 4,
+                  fontSize: 12,
+                  fontWeight: "500",
+                  color: "#212529",
+                }}
+              >
+                Income
+              </StyledText>
+            </StyledTouchableOpacity>
 
-          <View style={styles.menuItem}>
-            <TouchableOpacity
+            <StyledTouchableOpacity
               onPress={openExpenseModal}
-              style={styles.expenseButton}
+              style={{
+                position: "absolute",
+                bottom: 100,
+                alignItems: "center",
+              }}
             >
-              <View style={styles.iconCircle}>
-                <Ionicons name="trending-down" size={20} color="#F44336" />
-              </View>
-              <Text style={styles.menuItemText}>Expense</Text>
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
+              <StyledView
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 28,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#DC3545",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 3,
+                  elevation: 5,
+                }}
+              >
+                <Ionicons name="trending-down" size={24} color="#FFFFFF" />
+              </StyledView>
+              <StyledText
+                style={{
+                  marginTop: 4,
+                  fontSize: 12,
+                  fontWeight: "500",
+                  color: "#212529",
+                }}
+              >
+                Expense
+              </StyledText>
+            </StyledTouchableOpacity>
+          </>
+        )}
 
-      {/* Main FAB button */}
-      <TouchableOpacity onPress={toggleMenu} style={styles.mainButton}>
-        <Animated.View style={styles.mainButtonInner}>
-          <Ionicons name="close" size={24} color="#FFF" />
-        </Animated.View>
-      </TouchableOpacity>
-    </View>
+        {/* Main FAB button */}
+        <TouchableOpacity
+          onPress={toggleMenu}
+          style={{
+            width: 64,
+            height: 64,
+            borderRadius: 32,
+            backgroundColor: "#001871", // Primary color from theme
+            justifyContent: "center",
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4.65,
+            elevation: 8,
+          }}
+        >
+          <Animated.View
+            style={{
+              transform: [{ rotate: rotation }],
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Ionicons
+              name={isOpen ? "close" : "add"}
+              size={30}
+              color="#FFFFFF"
+            />
+          </Animated.View>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    bottom: 24,
-    right: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 999,
-  },
-  overlay: {
-    backgroundColor: "rgba(0,0,0,0.1)",
-    zIndex: 1,
-  },
-  mainButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#4A89F3",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5,
-    elevation: 3,
-    zIndex: 2,
-  },
-  mainButtonInner: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  menuItem: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 2,
-  },
-  incomeButton: {
-    position: "absolute",
-    top: -180,
-    right: 0,
-    alignItems: "center",
-  },
-  expenseButton: {
-    position: "absolute",
-    top: -100,
-    right: 0,
-    alignItems: "center",
-  },
-  iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  menuItemText: {
-    marginTop: 4,
-    fontSize: 12,
-    fontWeight: "500",
-    color: "#333",
-  },
-});

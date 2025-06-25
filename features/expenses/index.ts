@@ -14,5 +14,9 @@ export * from "./utils/mockData";
 export * from "./components/AddTransactionModal";
 export * from "./components/ExpenseOptionsModal";
 export * from "./components/FloatingActionButton";
+export * from "./components/MonthlySummary";
+export * from "./components/MonthSelector";
+export * from "./components/TransactionGroup";
+export * from "./components/TransactionItem";
 
 // Move component exports here later once they're refactored
