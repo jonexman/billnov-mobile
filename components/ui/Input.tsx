@@ -1,21 +1,20 @@
-import {
-  borderRadius,
-  colors,
-  spacing,
-  typography,
-} from "@/shared/constants/theme";
+import { colors } from "@/shared/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
+import { styled } from "nativewind";
 import React, { useState } from "react";
 import {
-  StyleSheet,
   Text,
   TextInput,
   TextInputProps,
-  TextStyle,
   TouchableOpacity,
   View,
-  ViewStyle,
 } from "react-native";
+
+// Create styled components
+const StyledView = styled(View);
+const StyledText = styled(Text);
+const StyledTextInput = styled(TextInput);
+const StyledTouchableOpacity = styled(TouchableOpacity);
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -23,9 +22,9 @@ interface InputProps extends TextInputProps {
   leftIcon?: keyof typeof Ionicons.glyphMap;
   rightIcon?: keyof typeof Ionicons.glyphMap;
   onRightIconPress?: () => void;
-  containerStyle?: ViewStyle;
-  inputStyle?: TextStyle;
-  labelStyle?: TextStyle;
+  containerClassName?: string;
+  inputClassName?: string;
+  labelClassName?: string;
   helperText?: string;
   required?: boolean;
 }
@@ -36,9 +35,9 @@ export const Input: React.FC<InputProps> = ({
   leftIcon,
   rightIcon,
   onRightIconPress,
-  containerStyle,
-  inputStyle,
-  labelStyle,
+  containerClassName = "",
+  inputClassName = "",
+  labelClassName = "",
   helperText,
   required = false,
   secureTextEntry,
@@ -56,25 +55,27 @@ export const Input: React.FC<InputProps> = ({
   const isPassword = secureTextEntry !== undefined;
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <StyledView className={`mb-4 ${containerClassName}`}>
       {label && (
-        <View style={styles.labelContainer}>
-          <Text style={[styles.label, labelStyle]}>
+        <StyledView className="flex-row items-center mb-1">
+          <StyledText
+            className={`text-sm font-medium text-gray-700 ${labelClassName}`}
+          >
             {label}
-            {required && <Text style={styles.required}> *</Text>}
-          </Text>
-        </View>
+            {required && <StyledText className="text-error"> *</StyledText>}
+          </StyledText>
+        </StyledView>
       )}
 
-      <View
-        style={[
-          styles.inputContainer,
-          isFocused && styles.focused,
-          error && styles.error,
-        ]}
+      <StyledView
+        className={`
+          flex-row items-center bg-white border rounded-md px-4 h-12
+          ${isFocused ? "border-primary" : "border-gray-300"} 
+          ${error ? "border-error" : ""}
+        `}
       >
         {leftIcon && (
-          <View style={styles.leftIcon}>
+          <StyledView className="mr-2">
             <Ionicons
               name={leftIcon}
               size={20}
@@ -86,16 +87,16 @@ export const Input: React.FC<InputProps> = ({
                   : colors.neutral.gray600
               }
             />
-          </View>
+          </StyledView>
         )}
 
-        <TextInput
-          style={[
-            styles.input,
-            leftIcon && { paddingLeft: spacing.xs },
-            (rightIcon || isPassword) && { paddingRight: spacing.xs },
-            inputStyle,
-          ]}
+        <StyledTextInput
+          className={`
+            flex-1 h-full text-gray-900 text-base
+            ${leftIcon ? "pl-1" : ""} 
+            ${rightIcon || isPassword ? "pr-1" : ""} 
+            ${inputClassName}
+          `}
           placeholderTextColor={colors.neutral.gray500}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -104,8 +105,8 @@ export const Input: React.FC<InputProps> = ({
         />
 
         {isPassword && (
-          <TouchableOpacity
-            style={styles.rightIcon}
+          <StyledTouchableOpacity
+            className="ml-2 p-1"
             onPress={togglePasswordVisibility}
           >
             <Ionicons
@@ -113,12 +114,12 @@ export const Input: React.FC<InputProps> = ({
               size={20}
               color={colors.neutral.gray600}
             />
-          </TouchableOpacity>
+          </StyledTouchableOpacity>
         )}
 
         {rightIcon && !isPassword && (
-          <TouchableOpacity
-            style={styles.rightIcon}
+          <StyledTouchableOpacity
+            className="ml-2 p-1"
             onPress={onRightIconPress}
             disabled={!onRightIconPress}
           >
@@ -127,71 +128,17 @@ export const Input: React.FC<InputProps> = ({
               size={20}
               color={colors.neutral.gray600}
             />
-          </TouchableOpacity>
+          </StyledTouchableOpacity>
         )}
-      </View>
+      </StyledView>
 
       {(error || helperText) && (
-        <Text style={[styles.helperText, error ? styles.errorText : null]}>
+        <StyledText
+          className={`text-sm mt-1 ${error ? "text-error" : "text-gray-600"}`}
+        >
           {error || helperText}
-        </Text>
+        </StyledText>
       )}
-    </View>
+    </StyledView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: spacing.md,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.xs,
-  },
-  label: {
-    fontSize: typography.fontSizes.sm,
-    fontWeight: typography.fontWeights.medium,
-    color: colors.neutral.gray700,
-  },
-  required: {
-    color: colors.error.main,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.neutral.white,
-    borderWidth: 1,
-    borderColor: colors.neutral.gray300,
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.md,
-    height: 48,
-  },
-  focused: {
-    borderColor: colors.primary.main,
-  },
-  error: {
-    borderColor: colors.error.main,
-  },
-  input: {
-    flex: 1,
-    height: "100%",
-    color: colors.neutral.gray900,
-    fontSize: typography.fontSizes.md,
-  },
-  leftIcon: {
-    marginRight: spacing.sm,
-  },
-  rightIcon: {
-    marginLeft: spacing.sm,
-    padding: spacing.xs,
-  },
-  helperText: {
-    fontSize: typography.fontSizes.sm,
-    marginTop: spacing.xs,
-    color: colors.neutral.gray600,
-  },
-  errorText: {
-    color: colors.error.main,
-  },
-});

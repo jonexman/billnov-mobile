@@ -1,13 +1,16 @@
-import { borderRadius, colors, typography } from "@/shared/constants/theme";
+import { colors } from "@/shared/constants/theme";
+import { styled } from "nativewind";
 import React from "react";
 import {
   ActivityIndicator,
   Text,
-  TextStyle,
   TouchableOpacity,
   TouchableOpacityProps,
-  ViewStyle,
 } from "react-native";
+
+// Create styled components
+const StyledText = styled(Text);
+const StyledTouchableOpacity = styled(TouchableOpacity);
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
 export type ButtonSize = "sm" | "md" | "lg";
@@ -20,8 +23,7 @@ interface ButtonProps extends TouchableOpacityProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   fullWidth?: boolean;
-  buttonStyle?: ViewStyle;
-  textStyle?: TextStyle;
+  className?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -32,98 +34,57 @@ export const Button: React.FC<ButtonProps> = ({
   leftIcon,
   rightIcon,
   fullWidth = false,
-  buttonStyle,
-  textStyle,
+  className = "",
   disabled,
   ...rest
 }) => {
-  // Get styles based on variant and size
-  const getButtonStyles = (): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      borderRadius: borderRadius.md,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-    };
+  // Get base and variant classes
+  const getButtonClasses = (): string => {
+    // Base classes
+    let classes = "rounded-md flex-row items-center justify-center";
 
-    // Size styles
-    const sizeStyles: Record<ButtonSize, ViewStyle> = {
-      sm: { paddingVertical: 8, paddingHorizontal: 12 },
-      md: { paddingVertical: 12, paddingHorizontal: 16 },
-      lg: { paddingVertical: 16, paddingHorizontal: 24 },
-    };
+    // Size classes
+    if (size === "sm") classes += " py-2 px-3";
+    else if (size === "md") classes += " py-3 px-4";
+    else if (size === "lg") classes += " py-4 px-6";
 
-    // Variant styles
-    const variantStyles: Record<ButtonVariant, ViewStyle> = {
-      primary: {
-        backgroundColor: colors.primary.main,
-      },
-      secondary: {
-        backgroundColor: colors.accent.main,
-      },
-      outline: {
-        backgroundColor: "transparent",
-        borderWidth: 1,
-        borderColor: colors.primary.main,
-      },
-      ghost: {
-        backgroundColor: "transparent",
-      },
-    };
+    // Variant classes
+    if (variant === "primary") classes += " bg-primary";
+    else if (variant === "secondary") classes += " bg-accent";
+    else if (variant === "outline")
+      classes += " bg-transparent border border-primary";
+    else if (variant === "ghost") classes += " bg-transparent";
 
-    const disabledStyle: ViewStyle = disabled ? { opacity: 0.6 } : {};
+    // Disabled state
+    if (disabled) classes += " opacity-60";
 
-    const widthStyle: ViewStyle = fullWidth ? { width: "100%" } : {};
+    // Width
+    if (fullWidth) classes += " w-full";
 
-    return {
-      ...baseStyle,
-      ...sizeStyles[size],
-      ...variantStyles[variant],
-      ...disabledStyle,
-      ...widthStyle,
-    };
+    return classes;
   };
 
-  // Get text styles based on variant
-  const getTextStyles = (): TextStyle => {
-    const baseStyle: TextStyle = {
-      textAlign: "center",
-      fontWeight: typography.fontWeights.semibold,
-    };
+  // Get text classes based on variant
+  const getTextClasses = (): string => {
+    let classes = "text-center font-semibold";
 
-    // Size styles
-    const sizeStyles: Record<ButtonSize, TextStyle> = {
-      sm: { fontSize: typography.fontSizes.sm },
-      md: { fontSize: typography.fontSizes.md },
-      lg: { fontSize: typography.fontSizes.lg },
-    };
+    // Size classes
+    if (size === "sm") classes += " text-sm";
+    else if (size === "md") classes += " text-base";
+    else if (size === "lg") classes += " text-lg";
 
-    // Variant styles
-    const variantTextStyles: Record<ButtonVariant, TextStyle> = {
-      primary: {
-        color: colors.primary.contrast,
-      },
-      secondary: {
-        color: colors.accent.contrast,
-      },
-      outline: {
-        color: colors.primary.main,
-      },
-      ghost: {
-        color: colors.primary.main,
-      },
-    };
+    // Variant-specific text color
+    if (variant === "primary") classes += " text-white";
+    else if (variant === "secondary") classes += " text-white";
+    else if (variant === "outline" || variant === "ghost")
+      classes += " text-primary";
 
-    return {
-      ...baseStyle,
-      ...sizeStyles[size],
-      ...variantTextStyles[variant],
-    };
+    return classes;
   };
 
   return (
-    <TouchableOpacity
-      style={[getButtonStyles(), buttonStyle]}
+    <StyledTouchableOpacity
+      className={`${getButtonClasses()} ${className}`}
       disabled={isLoading || disabled}
       {...rest}
     >
@@ -139,18 +100,16 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <>
           {leftIcon && <>{leftIcon}</>}
-          <Text
-            style={[
-              getTextStyles(),
-              textStyle,
-              leftIcon || rightIcon ? { marginHorizontal: 8 } : null,
-            ]}
+          <StyledText
+            className={`${getTextClasses()} ${
+              leftIcon || rightIcon ? "mx-2" : ""
+            }`}
           >
             {title}
-          </Text>
+          </StyledText>
           {rightIcon && <>{rightIcon}</>}
         </>
       )}
-    </TouchableOpacity>
+    </StyledTouchableOpacity>
   );
 };

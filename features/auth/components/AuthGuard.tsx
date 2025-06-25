@@ -6,9 +6,13 @@
  */
 
 import { useRouter, useSegments } from "expo-router";
+import { styled } from "nativewind";
 import React, { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useAuth } from "../context/AuthContext";
+
+// Create styled component
+const StyledView = styled(View);
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -82,9 +86,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
   // Show loading indicator while checking authentication
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <StyledView className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
-      </View>
+      </StyledView>
     );
   }
 

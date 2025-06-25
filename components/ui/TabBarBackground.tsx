@@ -1,12 +1,15 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { colors } from "@/shared/constants/theme";
 import { BlurView } from "expo-blur";
+import { styled } from "nativewind";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, StyleSheet, View, ViewStyle } from "react-native";
+import { Animated, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+// Create styled component
+const StyledView = styled(View);
+
 interface TabBarBackgroundProps {
-  style?: ViewStyle;
+  className?: string;
   blurred?: boolean;
   blurIntensity?: number;
   children?: React.ReactNode;
@@ -158,7 +161,7 @@ export function useBottomTabOverflow<T>(
  * ```
  */
 export const TabBarBackground: React.FC<TabBarBackgroundProps> = ({
-  style,
+  className = "",
   blurred = true,
   blurIntensity = 50,
   children,
@@ -170,25 +173,20 @@ export const TabBarBackground: React.FC<TabBarBackgroundProps> = ({
   const isDark = colorScheme === "dark";
 
   // Determine border styles
-  const borderStyles = !noTopBorder
-    ? isDark
-      ? styles.darkBorder
-      : styles.lightBorder
-    : {};
+  const getBorderClass = () => {
+    if (noTopBorder) return "";
+    return isDark ? "border-t border-gray-700" : "border-t border-gray-200";
+  };
 
   // For fully transparent background
   if (transparent) {
     return (
-      <View
-        style={[
-          styles.container,
-          { paddingBottom: insets.bottom },
-          borderStyles,
-          style,
-        ]}
+      <StyledView
+        className={`w-full ${getBorderClass()} ${className}`}
+        style={{ paddingBottom: insets.bottom }}
       >
         {children}
-      </View>
+      </StyledView>
     );
   }
 
@@ -198,12 +196,8 @@ export const TabBarBackground: React.FC<TabBarBackgroundProps> = ({
       <BlurView
         intensity={blurIntensity}
         tint={isDark ? "dark" : "light"}
-        style={[
-          styles.container,
-          { paddingBottom: insets.bottom },
-          borderStyles,
-          style,
-        ]}
+        className={`w-full ${getBorderClass()}`}
+        style={{ paddingBottom: insets.bottom }}
       >
         {children}
       </BlurView>
@@ -212,38 +206,15 @@ export const TabBarBackground: React.FC<TabBarBackgroundProps> = ({
 
   // For solid background
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingBottom: insets.bottom },
-        isDark ? styles.darkBackground : styles.lightBackground,
-        borderStyles,
-        style,
-      ]}
+    <StyledView
+      className={`w-full ${getBorderClass()} ${
+        isDark ? "bg-gray-800" : "bg-white"
+      } ${className}`}
+      style={{ paddingBottom: insets.bottom }}
     >
       {children}
-    </View>
+    </StyledView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
-  lightBackground: {
-    backgroundColor: colors.neutral.white,
-  },
-  darkBackground: {
-    backgroundColor: colors.neutral.gray800,
-  },
-  lightBorder: {
-    borderTopWidth: 1,
-    borderTopColor: colors.neutral.gray200,
-  },
-  darkBorder: {
-    borderTopWidth: 1,
-    borderTopColor: colors.neutral.gray700,
-  },
-});
 
 export default TabBarBackground;

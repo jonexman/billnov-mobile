@@ -1,60 +1,41 @@
-import { borderRadius, colors, shadows } from "@/shared/constants/theme";
+import { styled } from "nativewind";
 import React from "react";
-import { StyleSheet, View, ViewProps, ViewStyle } from "react-native";
+import { View, ViewProps } from "react-native";
+
+// Create styled component
+const StyledView = styled(View);
 
 export type CardVariant = "default" | "elevated" | "outlined";
 
 interface CardProps extends ViewProps {
   variant?: CardVariant;
-  cardStyle?: ViewStyle;
+  className?: string;
   children: React.ReactNode;
 }
 
 export const Card: React.FC<CardProps> = ({
   variant = "default",
-  cardStyle,
+  className = "",
   children,
   ...rest
 }) => {
-  // Get styles based on variant
-  const getCardStyles = (): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      borderRadius: borderRadius.md,
-      padding: 16,
-    };
+  // Get classes based on variant
+  const getCardClasses = (): string => {
+    // Base classes
+    let classes = "rounded-md p-4";
 
-    // Variant styles
-    const variantStyles: Record<CardVariant, ViewStyle> = {
-      default: {
-        backgroundColor: colors.neutral.white,
-      },
-      elevated: {
-        backgroundColor: colors.neutral.white,
-        ...shadows.md,
-      },
-      outlined: {
-        backgroundColor: colors.neutral.white,
-        borderWidth: 1,
-        borderColor: colors.neutral.gray300,
-      },
-    };
+    // Variant classes
+    if (variant === "default") classes += " bg-white";
+    else if (variant === "elevated") classes += " bg-white shadow-md";
+    else if (variant === "outlined")
+      classes += " bg-white border border-gray-300";
 
-    return {
-      ...baseStyle,
-      ...variantStyles[variant],
-    };
+    return classes;
   };
 
   return (
-    <View style={[getCardStyles(), cardStyle]} {...rest}>
+    <StyledView className={`${getCardClasses()} ${className}`} {...rest}>
       {children}
-    </View>
+    </StyledView>
   );
 };
-
-const styles = StyleSheet.create({
-  base: {
-    borderRadius: borderRadius.md,
-    padding: 16,
-  },
-});
