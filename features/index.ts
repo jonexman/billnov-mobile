@@ -15,6 +15,7 @@
 // Re-export all features
 export * from "./auth";
 export * from "./expenses";
+export * from "./overview";
 export * from "./settings";
 export * from "./wallet";
 // TODO: Add other features as they are implemented
