@@ -30,7 +30,16 @@ function useProtectedRoute(
   const inAuthGroup = segments[0] === "auth";
   const inOnboardingGroup = segments[0] === "onboarding";
 
+  // Debug authentication state
+  console.log("AuthGuard - Protected Route Check:");
+  console.log("Current segments:", segments);
+  console.log("Is authenticated:", isAuthenticated);
+  console.log("In auth group:", inAuthGroup);
+  console.log("In onboarding group:", inOnboardingGroup);
+
   useEffect(() => {
+    console.log("AuthGuard - Route Protection Effect Running");
+
     if (
       // If the user is not signed in and the initial segment is not in the auth or onboarding group
       !isAuthenticated &&
@@ -38,10 +47,14 @@ function useProtectedRoute(
       !inOnboardingGroup
     ) {
       // Redirect to the sign-in page
+      console.log("Not authenticated, redirecting to login");
       router.replace("/auth/login");
     } else if (isAuthenticated && inAuthGroup) {
       // Redirect away from the sign-in page if the user is signed in
+      console.log("Already authenticated, redirecting from auth pages");
       router.replace("/");
+    } else {
+      console.log("No redirection needed");
     }
   }, [isAuthenticated, segments, inAuthGroup, inOnboardingGroup, router]);
 
@@ -54,7 +67,15 @@ function useProtectedRoute(
 export function AuthGuard({ children }: AuthGuardProps) {
   const segments = useSegments();
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user, session } = useAuth();
+
+  console.log("AuthGuard Component - Main:");
+  console.log("Auth state:", {
+    isAuthenticated,
+    isLoading,
+    hasUser: !!user,
+    hasSession: !!session,
+  });
 
   const { isProtected } = useProtectedRoute(segments, isAuthenticated, router);
 

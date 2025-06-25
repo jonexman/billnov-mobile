@@ -111,16 +111,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign in with email and password
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
+    console.log("AuthContext: Attempting to sign in with", email);
 
     try {
+      // The supabase client is already initialized with the correct config in supabase.ts
+      // No need to check environment variables again
       const response = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
+      console.log("AuthContext: Sign in response", {
+        success: !!response.data?.session,
+        error: response.error ? "Error present" : "No error",
+        user: response.data?.user?.email || "No user",
+      });
+
       return response;
     } catch (error) {
-      console.error("Error signing in:", error);
+      console.error("AuthContext: Error signing in:", error);
       return { error, data: null };
     } finally {
       setIsLoading(false);

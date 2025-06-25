@@ -13,6 +13,14 @@ import Constants from "expo-constants";
 const supabaseUrl = Constants.expoConfig?.extra?.supabaseUrl || "";
 const supabaseAnonKey = Constants.expoConfig?.extra?.supabaseAnonKey || "";
 
+// Debug Supabase configuration
+console.log("Supabase Service - Configuration:");
+console.log("Supabase URL:", supabaseUrl || "Not set");
+console.log(
+  "Supabase Anon Key:",
+  supabaseAnonKey ? "Found (not shown for security)" : "Not set"
+);
+
 // Validate environment variables
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error(
@@ -36,6 +44,9 @@ export const supabase: SupabaseClient = createClient(
   }
 );
 
+// Check if the client was initialized properly
+console.log("Supabase client initialized:", !!supabase);
+
 /**
  * Custom hook to get the current user
  * @returns The current user or null if not authenticated
@@ -51,6 +62,10 @@ export const getCurrentUser = async () => {
       throw error;
     }
 
+    console.log(
+      "getCurrentUser result:",
+      user ? "User found" : "No user found"
+    );
     return user;
   } catch (error) {
     console.error("Error getting current user:", error);
@@ -73,6 +88,10 @@ export const getCurrentSession = async () => {
       throw error;
     }
 
+    console.log(
+      "getCurrentSession result:",
+      session ? "Session found" : "No session found"
+    );
     return session;
   } catch (error) {
     console.error("Error getting current session:", error);

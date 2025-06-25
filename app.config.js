@@ -1,5 +1,21 @@
 import "dotenv/config";
 
+// Debug environment variables loading
+console.log("Environment variables check:");
+console.log("SUPABASE_URL:", process.env.SUPABASE_URL ? "Found" : "Not found");
+console.log(
+  "SUPABASE_ANON_KEY:",
+  process.env.SUPABASE_ANON_KEY ? "Found" : "Not found"
+);
+
+// Make sure we have mandatory variables
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+  console.error("ERROR: Missing required Supabase environment variables!");
+  console.error(
+    "Make sure you have a .env file with SUPABASE_URL and SUPABASE_ANON_KEY defined."
+  );
+}
+
 export default {
   expo: {
     name: "BillNov Mobile",
@@ -38,7 +54,7 @@ export default {
       enablePushNotifications: process.env.ENABLE_PUSH_NOTIFICATIONS === "true",
       enableRealtime: process.env.ENABLE_REALTIME === "true",
       eas: {
-        projectId: "your-eas-project-id",
+        projectId: "rxygoiprunpxpwxtqpel",
       },
     },
     plugins: ["expo-router"],

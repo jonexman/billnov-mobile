@@ -42,13 +42,38 @@ export default function LoginScreen() {
 
     try {
       setLoginError(null);
-      const { error } = await signIn(email, password);
+      console.log("Attempting to sign in with:", email);
+
+      // Use the signIn method from the auth context directly
+      const { data, error } = await signIn(email, password);
+
+      console.log("Sign in response:", {
+        data: data ? "Data exists" : "No data",
+        session: data?.session ? "Session exists" : "No session",
+        error: error ? error.message : "No error",
+      });
 
       if (error) {
         console.error("Login error:", error);
-        setLoginError(
-          error.message || "Failed to login. Please check your credentials."
-        );
+
+        // More detailed error messaging based on error type
+        if (error.message?.includes("Invalid login")) {
+          setLoginError(
+            "Invalid email or password. Please check your credentials."
+          );
+        } else if (error.message?.includes("Email not confirmed")) {
+          setLoginError("Please verify your email address before logging in.");
+        } else {
+          setLoginError(
+            error.message || "Failed to login. Please check your credentials."
+          );
+        }
+      } else if (!data || !data.session) {
+        console.error("No session returned after login");
+        setLoginError("Authentication failed. Please try again.");
+      } else {
+        console.log("Login successful:", data.user?.email);
+        // Auth context will handle the redirection via AuthGuard
       }
     } catch (error) {
       console.error("Login exception:", error);
@@ -193,33 +218,6 @@ export default function LoginScreen() {
               </Text>
             </TouchableOpacity>
           </View>
-
-          {/* Quick Login Buttons for Testing */}
-          {__DEV__ && (
-            <View style={styles.devContainer}>
-              <Text style={[styles.devTitle, { color: textColor }]}>
-                Dev Quick Login
-              </Text>
-              <TouchableOpacity
-                style={[styles.devButton, { backgroundColor: "#3B82F6" }]}
-                onPress={() => {
-                  setEmail("admin@billnovpay.com");
-                  setPassword("password123");
-                }}
-              >
-                <Text style={styles.devButtonText}>Admin</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.devButton, { backgroundColor: "#10B981" }]}
-                onPress={() => {
-                  setEmail("nigeriakalu@gmail.com");
-                  setPassword("password123");
-                }}
-              >
-                <Text style={styles.devButtonText}>User</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
